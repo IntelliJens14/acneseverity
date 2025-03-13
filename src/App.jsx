@@ -1,20 +1,23 @@
 import React, { useEffect, useState, useRef } from 'react';
 import * as tf from '@tensorflow/tfjs';
 
+const SEVERITY_LEVELS = ['Extremely Mild', 'Mild', 'Moderate', 'Severe'];
+
 const AcneSeverityPredictor = () => {
   const [model, setModel] = useState(null);
   const [image, setImage] = useState(null);
   const [severityLevel, setSeverityLevel] = useState(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  const streamRef = useRef(null);
 
   // ✅ Load Model from /public folder
   useEffect(() => {
     const loadModel = async () => {
+      if (model) return; // Prevent reloading if already loaded
       try {
         console.log("⏳ Loading model...");
-        const modelUrl = '/models/model.json'; // Load locally from public folder
-        const loadedModel = await tf.loadLayersModel(modelUrl);
+        const loadedModel = await tf.loadLayersModel('/models/model.json');
         setModel(loadedModel);
         console.log("✅ Model loaded successfully!");
       } catch (err) {
@@ -22,7 +25,7 @@ const AcneSeverityPredictor = () => {
       }
     };
     loadModel();
-  }, []);
+  }, [model]);
 
   // ✅ Handle Image Upload
   const handleImageUpload = (e) => {
@@ -32,6 +35,7 @@ const AcneSeverityPredictor = () => {
     const reader = new FileReader();
     reader.onload = (event) => {
       setImage(event.target.result);
+      setSeverityLevel(null); // Reset previous prediction
     };
     reader.readAsDataURL(file);
   };
@@ -42,28 +46,45 @@ const AcneSeverityPredictor = () => {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        streamRef.current = stream;
       }
     } catch (err) {
       console.error("❌ Error accessing camera:", err);
+      alert("⚠️ Unable to access camera. Please check your permissions.");
+    }
+  };
+
+  // ✅ Stop Camera (Cleanup Function)
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
     }
   };
 
   // ✅ Capture Image from Camera
   const captureImage = () => {
+    if (!videoRef.current || !canvasRef.current) return;
     const video = videoRef.current;
     const canvas = canvasRef.current;
-    if (video && canvas) {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-      setImage(canvas.toDataURL('image/png'));
-    }
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    const imageData = canvas.toDataURL('image/png');
+    setImage(imageData);
+    setSeverityLevel(null); // Reset previous prediction
   };
 
   // ✅ Predict Acne Severity
   const predictSeverity = async () => {
-    if (!model || !image) {
-      alert("⚠️ Please upload an image or capture one first.");
+    if (!model) {
+      alert("⚠️ Model is not loaded yet. Please wait.");
+      return;
+    }
+    if (!image) {
+      alert("⚠️ Please upload or capture an image first.");
       return;
     }
 
@@ -79,7 +100,7 @@ const AcneSeverityPredictor = () => {
           .div(tf.scalar(255)) // ✅ Normalization fix
           .expandDims();
 
-        const predictions = model.predict(tensor);
+        const predictions = await model.predict(tensor);
         const data = await predictions.data();
         const severity = data.indexOf(Math.max(...data));
 
@@ -104,19 +125,20 @@ const AcneSeverityPredictor = () => {
       <div className="camera-section">
         <video ref={videoRef} autoPlay playsInline></video>
         <button onClick={startCamera}>Start Camera</button>
-        <button onClick={captureImage}>Capture Image</button>
+        <button onClick={captureImage} disabled={!videoRef.current}>Capture Image</button>
+        <button onClick={stopCamera}>Stop Camera</button>
         <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
       </div>
 
       {/* Predict Button */}
-      <button onClick={predictSeverity} disabled={!model}>
+      <button onClick={predictSeverity} disabled={!model || !image}>
         Predict Severity
       </button>
 
       {/* Prediction Result */}
       {severityLevel !== null && (
         <div className="prediction-result">
-          <p>Predicted Acne Severity: <strong>{['Extremely Mild', 'Mild', 'Moderate', 'Severe'][severityLevel]}</strong></p>
+          <p>Predicted Acne Severity: <strong>{SEVERITY_LEVELS[severityLevel]}</strong></p>
         </div>
       )}
     </div>
