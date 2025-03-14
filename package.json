@@ -7,7 +7,6 @@
     "node": "22.14.0"
   },
   "scripts": {
-    "prepare": "npm install",
     "dev": "vite",
     "build": "vite build",
     "postbuild": "node copyModels.js",
