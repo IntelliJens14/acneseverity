@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import * as tf from '@tensorflow/tfjs';
-import "/public/styles.css"; // Ensure styles load correctly
+import "./styles.css"; // Import from src directory
 
 const SEVERITY_LEVELS = ['Extremely Mild', 'Mild', 'Moderate', 'Severe'];
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://acne-ai-backend.onrender.com"; // Netlify Env Variable
