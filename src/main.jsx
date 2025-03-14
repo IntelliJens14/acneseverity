@@ -17,9 +17,9 @@ if (rootElement) {
     "%c[Error] Root element not found! Make sure your HTML file has a <div id='root'></div>.",
     "color: red; font-weight: bold;"
   );
-  alert("App failed to load. Root element missing in the HTML file.");
-<<<<<<< HEAD
+
+  // Optional: Alert users in development mode
+  if (process.env.NODE_ENV !== 'production') {
+    alert("App failed to load. Root element missing in the HTML file.");
+  }
 }
-=======
-}
->>>>>>> 33d476c99518db0b5b4646943a41b9c636cde041
