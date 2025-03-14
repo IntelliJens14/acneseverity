@@ -2,9 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './styles.css';
-import process from 'node:process';
 
-// Get root element safely
+// ✅ Ensure `process.env` works in Vite
+const isDev = import.meta.env.MODE !== 'production';
+
+// ✅ Get root element safely
 const rootElement = document.getElementById('root');
 
 if (rootElement) {
@@ -21,8 +23,8 @@ if (rootElement) {
     "color: red; font-weight: bold;"
   );
 
-  // Optional: Alert users in development mode
-  if (process.env.NODE_ENV !== 'production') {
-    alert("App failed to load. Root element missing in index.html.");
+  // ✅ Show warning only in development
+  if (isDev) {
+    console.warn("⚠️ App failed to load because #root is missing in index.html.");
   }
 }
