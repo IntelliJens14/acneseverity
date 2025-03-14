@@ -1,46 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>Acne Severity Detector</title>
-
-    <!-- ✅ Use relative paths for styles.css -->
-    <link rel="stylesheet" href="./styles.css" onerror="this.onerror=null; this.href='./fallback.css';">
-
-    <!-- ✅ Prevent favicon 404 error (empty data URL) -->
-    <link rel="icon" href="data:," type="image/x-icon">
-
-    <!-- ✅ Meta Tags for SEO -->
-    <meta name="description" content="AI-powered acne severity detection using TensorFlow.js and React. Upload an image or use your camera to analyze acne severity.">
-    <meta name="keywords" content="AI, Acne Detection, Skin Care, Machine Learning, TensorFlow.js, Deep Learning">
-    <meta name="author" content="Pangandaman et al.">
-
-    <!-- ✅ Open Graph Meta Tags -->
-    <meta property="og:title" content="Acne Severity Detector">
-    <meta property="og:description" content="Analyze acne severity using AI-powered technology with TensorFlow.js.">
-    <meta property="og:image" content="https://acneseverity.netlify.app/preview-image.jpg"> 
-    <meta property="og:url" content="https://acneseverity.netlify.app/">
-    <meta property="og:type" content="website">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React + Vite App</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="root"></div>
-
-    <!-- ✅ Prevent Ethereum bug (MetaMask, etc.) -->
-    <script>
-      if (window.ethereum) {
-        console.warn("⚠️ Ethereum object already exists. Ensuring no overrides...");
-        Object.defineProperty(window, "ethereum", {
-          configurable: false,
-          enumerable: false,
-          writable: false,
-          value: window.ethereum
-        });
-      }
-    </script>
-
-    <!-- ✅ Ensure Vite uses correct path (compiled to `/dist/` in Netlify) -->
-    <script defer src="./main.js"></script>
+  <div class="container">
+    <h1>Upload and Analyze</h1>
+    <div class="image-container">
+      <img src="placeholder.jpg" alt="Placeholder">
+    </div>
+    <div class="upload-section">
+      <input type="file" accept="image/*">
+    </div>
+    <div class="camera-section">
+      <video autoplay playsinline></video>
+    </div>
+    <button class="analyze-button">Analyze</button>
+    <div class="prediction-result">Prediction: None</div>
+    <div class="result">Result: Pending</div>
+  </div>
 </body>
 </html>
