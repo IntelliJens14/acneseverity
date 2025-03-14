@@ -4,17 +4,17 @@
   "version": "0.0.1",
   "type": "module",
   "engines": {
-    "node": "22.14.0"
+    "node": ">=18.0.0" // Updated to a more common Node.js version
   },
   "scripts": {
-  "dev": "vite",
-  "build": "vite build",
-  "postbuild": "node -e \"require('fs').existsSync('copyModels.js') && require('child_process').execSync('node copyModels.js', { stdio: 'inherit' })\"",
-  "preview": "vite preview",
-  "lint": "eslint . --fix",
-  "clean": "rimraf dist",
-  "start": "vite preview",
-  "serve": "serve -s dist"
+    "dev": "vite",
+    "build": "vite build",
+    "postbuild": "node -e \"import('fs').then(fs => fs.existsSync('copyModels.js') && import('child_process').then(cp => cp.execSync('node copyModels.js', { stdio: 'inherit' }))\"",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "clean": "rimraf dist",
+    "start": "vite preview",
+    "serve": "serve -s dist"
   },
   "dependencies": {
     "@tensorflow/tfjs": "^4.22.0",
