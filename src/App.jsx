@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import * as tf from '@tensorflow/tfjs';
-import "/public/styles.css"; // ✅ Ensure styles load correctly
+import "/public/styles.css"; // Ensure styles load correctly
 
 const SEVERITY_LEVELS = ['Extremely Mild', 'Mild', 'Moderate', 'Severe'];
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://acne-ai-backend.onrender.com"; // ✅ Netlify Env Variable
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://acne-ai-backend.onrender.com"; // Netlify Env Variable
 
 const AcneSeverityPredictor = () => {
   const [image, setImage] = useState(null);
@@ -23,6 +23,7 @@ const AcneSeverityPredictor = () => {
         console.log("✅ Model loaded successfully!");
       } catch (err) {
         console.error("❌ Error loading model:", err);
+        alert("⚠️ Failed to load the model. Please check the console for details.");
       }
     };
     loadModel();
@@ -39,7 +40,7 @@ const AcneSeverityPredictor = () => {
     const objectUrl = URL.createObjectURL(file);
     setImagePreview(objectUrl);
 
-    // ✅ Cleanup old object URLs properly
+    // Cleanup old object URLs properly
     return () => {
       URL.revokeObjectURL(objectUrl);
     };
@@ -57,6 +58,7 @@ const AcneSeverityPredictor = () => {
 
     img.onload = async () => {
       try {
+        setLoading(true);
         const tensor = tf.browser
           .fromPixels(img)
           .resizeNearestNeighbor([224, 224])
@@ -72,6 +74,8 @@ const AcneSeverityPredictor = () => {
       } catch (error) {
         console.error("❌ Error during prediction:", error);
         alert("⚠️ Error in frontend model prediction.");
+      } finally {
+        setLoading(false);
       }
     };
   };
@@ -113,10 +117,12 @@ const AcneSeverityPredictor = () => {
       <input type="file" accept="image/*" onChange={handleImageUpload} />
 
       {/* Image Preview */}
-      {imagePreview && <img src={imagePreview} alt="Uploaded Preview" className="image-container" />}
+      {imagePreview && (
+        <img src={imagePreview} alt="Uploaded Preview" className="image-container" />
+      )}
 
       {/* Predict Buttons */}
-      <button onClick={predictSeverity} disabled={!modelRef.current || !image}>
+      <button onClick={predictSeverity} disabled={!modelRef.current || !image || loading}>
         Predict Severity (Frontend)
       </button>
 
@@ -125,7 +131,9 @@ const AcneSeverityPredictor = () => {
       </button>
 
       {/* Prediction Result */}
-      {severityLevel !== null && <p>Frontend Prediction: {SEVERITY_LEVELS[severityLevel]}</p>}
+      {severityLevel !== null && (
+        <p>Frontend Prediction: {SEVERITY_LEVELS[severityLevel]}</p>
+      )}
       {prediction && <p>Backend Prediction: {prediction}</p>}
     </div>
   );
