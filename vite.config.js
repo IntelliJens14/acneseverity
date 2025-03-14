@@ -1,26 +1,26 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import process from 'process';
 
 export default defineConfig({
   plugins: [react()],
+  base: "./", // ✅ Ensures relative paths work on Netlify
 
   server: {
-    port: 5173, // Custom port for local development
-    cors: true,  // Enable CORS
+    port: 5173,
+    cors: true,
     proxy: {
       "/api": {
-        target: process.env.VITE_BACKEND_URL || "https://acne-ai-backend.onrender.com",
+        target: "https://acne-ai-backend.onrender.com",
         changeOrigin: true,
         secure: true,
-        rewrite: (path) => path.replace(/^\/api/, ""), // Proxy `/api` calls
+        rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
   },
 
   build: {
     outDir: "dist",
-    sourcemap: true, // Helpful for debugging in production
+    sourcemap: true, // ✅ Helps debug Netlify errors
     rollupOptions: {
       output: {
         assetFileNames: "assets/[name]-[hash][extname]",
@@ -30,8 +30,7 @@ export default defineConfig({
     },
   },
 
-  // Netlify Optimization
   define: {
-    "process.env.VITE_BACKEND_URL": JSON.stringify(process.env.VITE_BACKEND_URL || "https://acne-ai-backend.onrender.com"),
+    "process.env": {}, // ✅ Fixes potential process.env issues
   },
 });
