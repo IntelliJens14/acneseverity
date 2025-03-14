@@ -6,10 +6,10 @@
     
     <title>Acne Severity Detector</title>
 
-    <!-- ✅ Correct paths for styles.css (inside public/) -->
-    <link rel="stylesheet" href="/public/styles.css" onerror="this.onerror=null; this.href='/public/fallback.css';">
+    <!-- ✅ Use relative paths for styles.css -->
+    <link rel="stylesheet" href="./styles.css" onerror="this.onerror=null; this.href='./fallback.css';">
 
-    <!-- ✅ Prevent favicon 404 error -->
+    <!-- ✅ Prevent favicon 404 error (empty data URL) -->
     <link rel="icon" href="data:," type="image/x-icon">
 
     <!-- ✅ Meta Tags for SEO -->
@@ -27,7 +27,20 @@
 <body>
     <div id="root"></div>
 
-    <!-- ✅ Correct paths for main.jsx (inside public/) -->
-    <script defer src="/public/main.jsx"></script>
+    <!-- ✅ Prevent Ethereum bug (MetaMask, etc.) -->
+    <script>
+      if (window.ethereum) {
+        console.warn("⚠️ Ethereum object already exists. Ensuring no overrides...");
+        Object.defineProperty(window, "ethereum", {
+          configurable: false,
+          enumerable: false,
+          writable: false,
+          value: window.ethereum
+        });
+      }
+    </script>
+
+    <!-- ✅ Ensure Vite uses correct path (compiled to `/dist/` in Netlify) -->
+    <script defer src="./main.js"></script>
 </body>
 </html>
