@@ -1,15 +1,26 @@
 import React, { useEffect, useState, useRef } from 'react';
 import * as tf from '@tensorflow/tfjs';
+import "./styles.css";
 
 const SEVERITY_LEVELS = ['Extremely Mild', 'Mild', 'Moderate', 'Severe'];
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const AcneSeverityPredictor = () => {
   const [model, setModel] = useState(null);
   const [image, setImage] = useState(null);
   const [severityLevel, setSeverityLevel] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [prediction, setPrediction] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
+
+  // Detect if the user is on a mobile device
+  useEffect(() => {
+    setIsMobile(/Mobi|Android/i.test(navigator.userAgent));
+  }, []);
 
   // ✅ Load Model from /public folder
   useEffect(() => {
@@ -38,6 +49,13 @@ const AcneSeverityPredictor = () => {
       setSeverityLevel(null); // Reset previous prediction
     };
     reader.readAsDataURL(file);
+
+    // Create image preview
+    const objectUrl = URL.createObjectURL(file);
+    setImagePreview(objectUrl);
+
+    // Cleanup previous URL when new image is uploaded
+    return () => URL.revokeObjectURL(objectUrl);
   };
 
   // ✅ Start Camera
@@ -112,6 +130,35 @@ const AcneSeverityPredictor = () => {
     };
   };
 
+  // Send Image to Backend for Analysis
+  const analyzeImage = async () => {
+    if (!image) {
+      alert("⚠️ Please upload an image first.");
+      return;
+    }
+
+    setLoading(true);
+    const formData = new FormData();
+    formData.append("file", image);
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/predict`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error("❌ Failed to get prediction!");
+
+      const data = await response.json();
+      setPrediction(data.prediction); // Assuming backend sends { prediction: value }
+    } catch (error) {
+      console.error("❌ Error:", error);
+      alert("Error during analysis. Check console for details.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="container">
       <h1>Acne Severity Detector</h1>
@@ -139,6 +186,30 @@ const AcneSeverityPredictor = () => {
       {severityLevel !== null && (
         <div className="prediction-result">
           <p>Predicted Acne Severity: <strong>{SEVERITY_LEVELS[severityLevel]}</strong></p>
+        </div>
+      )}
+
+      {/* Image Upload */}
+      <input type="file" accept="image/*" onChange={handleImageUpload} disabled={loading} />
+
+      {/* Camera Capture (Mobile Only) */}
+      {isMobile && (
+        <input type="file" accept="image/*" capture="environment" onChange={handleImageUpload} disabled={loading} />
+      )}
+
+      {imagePreview && (
+        <div className="image-container">
+          <img src={imagePreview} alt="Uploaded Preview" />
+        </div>
+      )}
+
+      <button onClick={analyzeImage} className="analyze-button" disabled={loading}>
+        {loading ? "Analyzing..." : "Analyze"}
+      </button>
+
+      {prediction !== null && (
+        <div className="result">
+          <h2>Prediction: {prediction.toFixed(2)}</h2>
         </div>
       )}
     </div>
