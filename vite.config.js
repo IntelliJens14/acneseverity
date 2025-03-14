@@ -1,28 +1,33 @@
-
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
   server: {
-    headers: {
-      "Access-Control-Allow-Origin": "*", // Allows cross-origin access
-      "Access-Control-Allow-Methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-      "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
+    cors: {
+      origin: "*",
+      methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+      allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept",
+    },
+    mimeTypes: {
+      "application/javascript": ["js", "jsx"], // Ensures JSX is served correctly
     },
   },
   build: {
     outDir: "dist",
-    assetsDir: "", // Ensures assets are properly referenced
+    assetsDir: "assets", // Ensures assets are placed in a separate folder
     rollupOptions: {
       input: {
         main: "index.html",
       },
       output: {
-        chunkSizeWarningLimit: 1000, // Increases chunk size limit
+        chunkSizeWarningLimit: 1500, // Allows larger chunks
+        entryFileNames: "assets/[name].[hash].js",
+        chunkFileNames: "assets/[name].[hash].js",
+        assetFileNames: "assets/[name].[hash].[ext]",
       },
     },
   },
-  publicDir: "public", // Ensures public folder is included in the build
-  assetsInclude: ["**/*.bin"], // Includes .bin files for TensorFlow model
+  publicDir: "public", // Ensures public assets are included
+  assetsInclude: ["**/*.bin", "**/*.json", "**/*.jpg", "**/*.png"], // Includes extra assets
 });
