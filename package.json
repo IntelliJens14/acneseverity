@@ -8,12 +8,10 @@
     "dev": "vite",
     "build": "vite build",
     "postbuild": "node -e \"require('fs').existsSync('copyModels.js') && require('child_process').execSync('node copyModels.js', { stdio: 'inherit' })\"",
-    "postbuild": "node copyModels.js", 
     "preview": "vite preview",
     "lint": "eslint . --fix",
     "clean": "rimraf dist",
     "start": "vite preview",
-    "serve": "vite preview"
     "serve": "serve -s dist"
   },
   "dependencies": {
@@ -37,8 +35,5 @@
     "rimraf": "^5.0.1",
     "serve": "^14.2.0",
     "vite": "~6.2.0"
-  }
-}
-    "serve": "^14.2.0"
   }
 }
