@@ -1,8 +1,8 @@
 import fs from "fs-extra";
 import path from "path";
 
-const source = path.join(__dirname, "public/models"); // Use absolute path
-const destination = path.join(__dirname, "dist/models"); // Use absolute path
+const source = path.join(process.cwd(), "public/models");
+const destination = path.join(process.cwd(), "dist/models");
 
 // Ensure the source directory exists
 if (fs.existsSync(source)) {
