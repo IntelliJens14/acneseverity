@@ -9,7 +9,7 @@ export default defineConfig({
     cors: true,  // Enable CORS
     proxy: {
       "/api": {
-        target: "https://acne-ai-backend.onrender.com",
+        target: process.env.VITE_BACKEND_URL || "https://acne-ai-backend.onrender.com",
         changeOrigin: true,
         secure: true,
         rewrite: (path) => path.replace(/^\/api/, ""), // Proxy `/api` calls
@@ -31,6 +31,6 @@ export default defineConfig({
 
   // Netlify Optimization
   define: {
-    "process.env": {},
+    "process.env.VITE_BACKEND_URL": JSON.stringify(process.env.VITE_BACKEND_URL || "https://acne-ai-backend.onrender.com"),
   },
 });
