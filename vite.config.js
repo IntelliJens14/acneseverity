@@ -3,7 +3,8 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: "./", // ✅ Ensures relative paths work on Netlify
+
+  base: "/", // ✅ Ensures correct path resolution in Netlify
 
   server: {
     port: 5173,
@@ -30,7 +31,16 @@ export default defineConfig({
     },
   },
 
+  resolve: {
+    alias: {
+      "@": "/src", // ✅ Allows easy imports using `@/` instead of long paths
+    },
+  },
+
   define: {
-    "process.env": {}, // ✅ Fixes potential process.env issues
+    "process.env": {}, // ✅ Prevents `process.env` reference issues in Vite
+    "import.meta.env.VITE_BACKEND_URL": JSON.stringify(
+      process.env.VITE_BACKEND_URL || "https://acne-ai-backend.onrender.com"
+    ),
   },
 });
