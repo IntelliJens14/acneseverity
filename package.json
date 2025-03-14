@@ -7,7 +7,6 @@
     "node": ">=20.18.3"
   },
   "scripts": {
-    "prepare": "npm install",
     "dev": "vite",
     "build": "vite build",
     "postbuild": "node -e \"require('fs').existsSync('copyModels.js') && require('child_process').execSync('node copyModels.js', { stdio: 'inherit' })\"",
