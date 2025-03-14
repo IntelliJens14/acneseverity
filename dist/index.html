@@ -6,28 +6,28 @@
     
     <title>Acne Severity Detector</title>
 
-    <!-- Link to CSS -->
-    <link rel="stylesheet" type="text/css" href="/styles.css" onerror="this.onerror=null; this.href='/fallback.css';">
+    <!-- ✅ Use relative paths for CSS -->
+    <link rel="stylesheet" href="./styles.css" onerror="this.onerror=null; this.href='./fallback.css';">
 
     <!-- Meta Tags for SEO -->
     <meta name="description" content="AI-powered acne severity detection using TensorFlow.js and React. Upload an image or use your camera to analyze acne severity.">
     <meta name="keywords" content="AI, Acne Detection, Skin Care, Machine Learning, TensorFlow.js, Deep Learning">
     <meta name="author" content="Pangandaman et al.">
 
-    <!-- Open Graph Meta Tags (for social media sharing) -->
+    <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="Acne Severity Detector">
     <meta property="og:description" content="Analyze acne severity using AI-powered technology with TensorFlow.js.">
-    <meta property="og:image" content="https://acneseverity.netlify.app//preview-image.jpg"> 
+    <meta property="og:image" content="https://acneseverity.netlify.app/preview-image.jpg"> 
     <meta property="og:url" content="https://acneseverity.netlify.app/">
     <meta property="og:type" content="website">
 
     <!-- Favicon -->
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
 </head>
 <body>
     <div id="root"></div>
 
-    <!-- Load JavaScript (Updated for Netlify Deployment) -->
-    <script defer src="/main.js"></script>
+    <!-- ✅ Use correct relative path for main.js -->
+    <script defer src="./main.js"></script>
 </body>
 </html>
