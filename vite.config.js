@@ -5,34 +5,23 @@ export default defineConfig({
   plugins: [react()],
   server: {
     cors: {
-      origin: "https://acne-ai-backend.onrender.com", // ✅ Allow backend API access
+      origin: "*",
       methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
       allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept",
     },
-    proxy: {
-      '/api': {
-        target: 'https://acne-ai-backend.onrender.com',
-        changeOrigin: true,
-        secure: true,
-      },
+    mimeTypes: {
+      "application/javascript": ["js", "jsx"],
+      "text/css": ["css"], // Ensure CSS is correctly served
     },
   },
   build: {
     outDir: "dist",
-    assetsDir: "assets", // ✅ Ensures assets are placed in a separate folder
     rollupOptions: {
-      input: {
-        main: "index.html",
-      },
       output: {
-        chunkSizeWarningLimit: 1500, // ✅ Allows larger chunks
+        assetFileNames: "assets/[name].[hash].[ext]",
         entryFileNames: "assets/[name].[hash].js",
         chunkFileNames: "assets/[name].[hash].js",
-        assetFileNames: "assets/[name].[hash].[ext]",
       },
     },
   },
-  publicDir: "public", // ✅ Ensures public assets are included
-  assetsInclude: ["**/*.bin", "**/*.json", "**/*.jpg", "**/*.png"], // ✅ Includes extra assets
 });
-
