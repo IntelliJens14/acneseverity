@@ -30,4 +30,8 @@ export default defineConfig({
   },
   publicDir: "public", // Ensures public assets are included
   assetsInclude: ["**/*.bin", "**/*.json", "**/*.jpg", "**/*.png"], // Includes extra assets
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> 33d476c99518db0b5b4646943a41b9c636cde041

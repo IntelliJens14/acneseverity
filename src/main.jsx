@@ -18,4 +18,8 @@ if (rootElement) {
     "color: red; font-weight: bold;"
   );
   alert("App failed to load. Root element missing in the HTML file.");
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 33d476c99518db0b5b4646943a41b9c636cde041
