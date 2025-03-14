@@ -3,7 +3,7 @@ import * as tf from '@tensorflow/tfjs';
 import "./styles.css";
 
 const SEVERITY_LEVELS = ['Extremely Mild', 'Mild', 'Moderate', 'Severe'];
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://acne-ai-backend.onrender.com"; // ✅ Use environment variable
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://acne-ai-backend.onrender.com"; // ✅ Use Netlify env variable
 
 const AcneSeverityPredictor = () => {
   const [image, setImage] = useState(null);
@@ -13,13 +13,13 @@ const AcneSeverityPredictor = () => {
   const [loading, setLoading] = useState(false);
   const modelRef = useRef(null);
 
-  // ✅ Load Model once using useRef
+  // ✅ Load Model once using useRef (Fixes Netlify Path Issue)
   useEffect(() => {
     const loadModel = async () => {
       if (modelRef.current) return; // Prevent duplicate loading
       try {
         console.log("⏳ Loading model...");
-        modelRef.current = await tf.loadLayersModel('/models/model.json');
+        modelRef.current = await tf.loadLayersModel('/models/model.json'); // Ensure model is inside `public/models`
         console.log("✅ Model loaded successfully!");
       } catch (err) {
         console.error("❌ Error loading model:", err);
@@ -28,7 +28,7 @@ const AcneSeverityPredictor = () => {
     loadModel();
   }, []);
 
-  // ✅ Handle Image Upload with cleanup
+  // ✅ Handle Image Upload
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
