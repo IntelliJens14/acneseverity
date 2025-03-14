@@ -5,33 +5,34 @@ export default defineConfig({
   plugins: [react()],
   server: {
     cors: {
-      origin: "*",
+      origin: "https://acne-ai-backend.onrender.com", // ✅ Allow backend API access
       methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
       allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept",
     },
-    mimeTypes: {
-      "application/javascript": ["js", "jsx"], // Ensures JSX is served correctly
+    proxy: {
+      '/api': {
+        target: 'https://acne-ai-backend.onrender.com',
+        changeOrigin: true,
+        secure: true,
+      },
     },
   },
   build: {
     outDir: "dist",
-    assetsDir: "assets", // Ensures assets are placed in a separate folder
+    assetsDir: "assets", // ✅ Ensures assets are placed in a separate folder
     rollupOptions: {
       input: {
         main: "index.html",
       },
       output: {
-        chunkSizeWarningLimit: 1500, // Allows larger chunks
+        chunkSizeWarningLimit: 1500, // ✅ Allows larger chunks
         entryFileNames: "assets/[name].[hash].js",
         chunkFileNames: "assets/[name].[hash].js",
         assetFileNames: "assets/[name].[hash].[ext]",
       },
     },
   },
-  publicDir: "public", // Ensures public assets are included
-  assetsInclude: ["**/*.bin", "**/*.json", "**/*.jpg", "**/*.png"], // Includes extra assets
-<<<<<<< HEAD
+  publicDir: "public", // ✅ Ensures public assets are included
+  assetsInclude: ["**/*.bin", "**/*.json", "**/*.jpg", "**/*.png"], // ✅ Includes extra assets
 });
-=======
-});
->>>>>>> 33d476c99518db0b5b4646943a41b9c636cde041
+
