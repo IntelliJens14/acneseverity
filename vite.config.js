@@ -1,37 +1,37 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import process from 'process';
 
 export default defineConfig({
   plugins: [react()],
+
   server: {
-    cors: {
-      origin: "*",
-      methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-      allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept",
-    },
-    mimeTypes: {
-      "application/javascript": ["js", "jsx"], // Ensures JSX is served correctly
+    port: 5173, // Custom port for local development
+    cors: true,  // Enable CORS
+    proxy: {
+      "/api": {
+        target: process.env.VITE_BACKEND_URL || "https://acne-ai-backend.onrender.com",
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/api/, ""), // Proxy `/api` calls
+      },
     },
   },
+
   build: {
     outDir: "dist",
-    assetsDir: "assets", // Ensures assets are placed in a separate folder
+    sourcemap: true, // Helpful for debugging in production
     rollupOptions: {
-      input: {
-        main: "index.html",
-      },
       output: {
-        chunkSizeWarningLimit: 1500, // Allows larger chunks
-        entryFileNames: "assets/[name].[hash].js",
-        chunkFileNames: "assets/[name].[hash].js",
-        assetFileNames: "assets/[name].[hash].[ext]",
+        assetFileNames: "assets/[name]-[hash][extname]",
+        entryFileNames: "assets/[name]-[hash].js",
+        chunkFileNames: "assets/[name]-[hash].js",
       },
     },
   },
-  publicDir: "public", // Ensures public assets are included
-  assetsInclude: ["**/*.bin", "**/*.json", "**/*.jpg", "**/*.png"], // Includes extra assets
-<<<<<<< HEAD
+
+  // Netlify Optimization
+  define: {
+    "process.env.VITE_BACKEND_URL": JSON.stringify(process.env.VITE_BACKEND_URL || "https://acne-ai-backend.onrender.com"),
+  },
 });
-=======
-});
->>>>>>> 33d476c99518db0b5b4646943a41b9c636cde041

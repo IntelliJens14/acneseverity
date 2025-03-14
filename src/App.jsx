@@ -3,52 +3,49 @@ import * as tf from '@tensorflow/tfjs';
 import "./styles.css";
 
 const SEVERITY_LEVELS = ['Extremely Mild', 'Mild', 'Moderate', 'Severe'];
-const BACKEND_URL = "https://acne-ai-backend.onrender.com"; // ✅ Use correct backend URL
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://acne-ai-backend.onrender.com"; // ✅ Use Netlify env variable
 
 const AcneSeverityPredictor = () => {
-  const [model, setModel] = useState(null);
   const [image, setImage] = useState(null);
   const [severityLevel, setSeverityLevel] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [prediction, setPrediction] = useState(null);
   const [loading, setLoading] = useState(false);
-  const videoRef = useRef(null);
-  const canvasRef = useRef(null);
-  const streamRef = useRef(null);
+  const modelRef = useRef(null);
 
-  // ✅ Load Model from the server
+  // ✅ Load Model once using useRef (Fixes Netlify Path Issue)
   useEffect(() => {
     const loadModel = async () => {
-      if (model) return;
+      if (modelRef.current) return; // Prevent duplicate loading
       try {
         console.log("⏳ Loading model...");
-        const loadedModel = await tf.loadLayersModel('/models/model.json');
-        setModel(loadedModel);
+        modelRef.current = await tf.loadLayersModel('/models/model.json'); // Ensure model is inside `public/models`
         console.log("✅ Model loaded successfully!");
       } catch (err) {
         console.error("❌ Error loading model:", err);
       }
     };
     loadModel();
-  }, [model]);
+  }, []);
 
   // ✅ Handle Image Upload
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    setImage(file); // Store file for backend processing
+    setImage(file);
 
-    // Create image preview
+    // Create object URL for preview
     const objectUrl = URL.createObjectURL(file);
     setImagePreview(objectUrl);
 
+    // Cleanup old object URLs
     return () => URL.revokeObjectURL(objectUrl);
   };
 
   // ✅ Predict Acne Severity (Frontend)
   const predictSeverity = async () => {
-    if (!model || !image) {
+    if (!modelRef.current || !image) {
       alert("⚠️ Please upload an image and ensure the model is loaded.");
       return;
     }
@@ -65,18 +62,19 @@ const AcneSeverityPredictor = () => {
           .div(tf.scalar(255))
           .expandDims();
 
-        const predictions = model.predict(tensor);
+        const predictions = modelRef.current.predict(tensor);
         const data = await predictions.data();
         const severity = data.indexOf(Math.max(...data));
 
         setSeverityLevel(severity);
       } catch (error) {
         console.error("❌ Error during prediction:", error);
+        alert("⚠️ Error in frontend model prediction.");
       }
     };
   };
 
-  // ✅ Send Image to Backend for Prediction
+  // ✅ Send Image to Backend for Analysis
   const analyzeImage = async () => {
     if (!image) {
       alert("⚠️ Please upload an image first.");
@@ -99,7 +97,7 @@ const AcneSeverityPredictor = () => {
       setPrediction(SEVERITY_LEVELS[data.prediction]); // Convert to text label
     } catch (error) {
       console.error("❌ Error:", error);
-      alert("Error during analysis. Check console for details.");
+      alert("⚠️ Error during backend analysis.");
     } finally {
       setLoading(false);
     }
@@ -116,7 +114,7 @@ const AcneSeverityPredictor = () => {
       {imagePreview && <img src={imagePreview} alt="Uploaded Preview" className="image-container" />}
 
       {/* Predict Buttons */}
-      <button onClick={predictSeverity} disabled={!model || !image}>
+      <button onClick={predictSeverity} disabled={!modelRef.current || !image}>
         Predict Severity (Frontend)
       </button>
 
