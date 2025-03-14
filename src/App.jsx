@@ -3,7 +3,7 @@ import * as tf from '@tensorflow/tfjs';
 import "./styles.css";
 
 const SEVERITY_LEVELS = ['Extremely Mild', 'Mild', 'Moderate', 'Severe'];
-const BACKEND_URL = "https://acne-ai-backend.onrender.com"; // ✅ Use correct backend URL
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "https://acne-ai-backend.onrender.com"; // ✅ Use environment variable
 
 const AcneSeverityPredictor = () => {
   const [image, setImage] = useState(null);
@@ -28,7 +28,7 @@ const AcneSeverityPredictor = () => {
     loadModel();
   }, []);
 
-  // ✅ Handle Image Upload
+  // ✅ Handle Image Upload with cleanup
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
