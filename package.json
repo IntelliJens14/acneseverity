@@ -5,12 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node copyModels.js",
     "preview": "vite preview",
     "lint": "eslint . --fix",
     "clean": "rimraf dist",
-    "postbuild": "cpx 'public/models/**/*' dist/models",
-    "start": "vite dev",
+    "start": "serve -s dist",
     "serve": "serve -s dist"
   },
   "dependencies": {
@@ -32,7 +31,6 @@
     "globals": "~15.15.0",
     "vite": "~6.2.0",
     "rimraf": "^5.0.1",
-    "cpx": "^1.5.0",
     "serve": "^14.2.0"
   }
 }
