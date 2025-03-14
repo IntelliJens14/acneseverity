@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import * as tf from '@tensorflow/tfjs';
-import "./styles.css";
+import "/public/styles.css"; // ✅ Ensure styles load correctly
 
 const SEVERITY_LEVELS = ['Extremely Mild', 'Mild', 'Moderate', 'Severe'];
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://acne-ai-backend.onrender.com"; // ✅ Use Netlify env variable
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://acne-ai-backend.onrender.com"; // ✅ Netlify Env Variable
 
 const AcneSeverityPredictor = () => {
   const [image, setImage] = useState(null);
@@ -13,7 +13,7 @@ const AcneSeverityPredictor = () => {
   const [loading, setLoading] = useState(false);
   const modelRef = useRef(null);
 
-  // ✅ Load Model once using useRef (Fixes Netlify Path Issue)
+  // ✅ Load Model once using useRef (Fix Netlify Path Issues)
   useEffect(() => {
     const loadModel = async () => {
       if (modelRef.current) return; // Prevent duplicate loading
@@ -39,8 +39,10 @@ const AcneSeverityPredictor = () => {
     const objectUrl = URL.createObjectURL(file);
     setImagePreview(objectUrl);
 
-    // Cleanup old object URLs
-    return () => URL.revokeObjectURL(objectUrl);
+    // ✅ Cleanup old object URLs properly
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
   };
 
   // ✅ Predict Acne Severity (Frontend)
